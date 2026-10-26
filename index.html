@@ -1,0 +1,2203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BUILD YOUR DREAM CITY: Cyberpunk 3D Math Exhibition</title>
+  
+  <!-- Three.js CDN & OrbitControls CDN -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+
+  <style>
+    /* ==========================================================================
+       01 CRIMSON RED CYBERPUNK THEME & EXHIBITION BOOTH LAYOUT
+       ========================================================================== */
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: #0a0003;
+      color: #f1e6e9;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", sans-serif;
+      min-height: 100vh;
+      overflow: hidden;
+      user-select: none;
+      background-image: 
+        radial-gradient(circle at 50% 15%, rgba(255, 0, 51, 0.14) 0%, transparent 65%),
+        linear-gradient(rgba(255, 0, 51, 0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 0, 51, 0.03) 1px, transparent 1px);
+      background-size: 100% 100%, 40px 40px, 40px 40px;
+    }
+
+    /* Top Navigation & Process Pipeline */
+    header {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 70px;
+      background: linear-gradient(180deg, rgba(16, 1, 6, 0.95) 0%, rgba(10, 0, 3, 0.75) 100%);
+      border-bottom: 1px solid rgba(255, 0, 51, 0.35);
+      backdrop-filter: blur(10px);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 24px;
+      z-index: 100;
+    }
+
+    .brand-group {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .brand-title {
+      font-size: 1.35rem;
+      font-weight: 900;
+      letter-spacing: 0.04em;
+      color: #ffffff;
+      text-transform: uppercase;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      text-shadow: 0 0 16px rgba(255, 0, 51, 0.6);
+    }
+
+    .brand-title span {
+      color: #ff0033;
+    }
+
+    .brand-sub {
+      font-size: 0.76rem;
+      color: #ff859e;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    /* Process Pipeline Pill */
+    .pipeline-bar {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(22, 2, 7, 0.8);
+      border: 1px solid rgba(255, 0, 51, 0.25);
+      border-radius: 20px;
+      padding: 4px 14px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+    }
+
+    .pipeline-step {
+      color: #7a4d57;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .pipeline-step.active {
+      color: #ff0033;
+      text-shadow: 0 0 10px rgba(255, 0, 51, 0.6);
+    }
+
+    /* Top Action Buttons */
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    /* ── Orbit / Place mode toggle ── */
+    .btn-mode-toggle {
+      background: #1c0208;
+      border: 2px solid rgba(255, 0, 51, 0.45);
+      color: #ff859e;
+      padding: 7px 15px;
+      border-radius: 8px;
+      font-size: 0.82rem;
+      font-weight: 700;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      transition: all 0.18s;
+      white-space: nowrap;
+    }
+
+    .btn-mode-toggle:hover {
+      border-color: #ff0033;
+      color: #ffffff;
+      box-shadow: 0 0 14px rgba(255, 0, 51, 0.35);
+    }
+
+    /* Active = Place-Building mode */
+    .btn-mode-toggle.place-active {
+      background: linear-gradient(135deg, #3b000d, #1c0208);
+      border-color: #ff0033;
+      color: #ffffff;
+      box-shadow: 0 0 18px rgba(255, 0, 51, 0.55);
+    }
+
+    .btn-mode-toggle .mode-label { pointer-events: none; }
+
+    .btn-sound {
+      background: #1c0208;
+      border: 1px solid rgba(255, 0, 51, 0.3);
+      color: #ff859e;
+      padding: 7px 14px;
+      border-radius: 8px;
+      font-size: 0.78rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.2s;
+    }
+
+    .btn-sound:hover {
+      border-color: #ff0033;
+      color: #ffffff;
+      box-shadow: 0 0 12px rgba(255, 0, 51, 0.3);
+    }
+
+    .btn-report-eval {
+      background: linear-gradient(135deg, #ff0033, #b80024);
+      border: 1px solid #ff2a5f;
+      color: #ffffff;
+      padding: 8px 18px;
+      border-radius: 8px;
+      font-size: 0.84rem;
+      font-weight: 800;
+      letter-spacing: 0.04em;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      box-shadow: 0 0 20px rgba(255, 0, 51, 0.5);
+      transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .btn-report-eval:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 0 30px rgba(255, 0, 51, 0.8);
+      background: linear-gradient(135deg, #ff2a5f, #ff0033);
+    }
+
+    /* Fullscreen 3D WebGL Canvas Container */
+    #webglContainer {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      z-index: 1;
+      cursor: grab;
+    }
+
+    /* Place-mode: crosshair cursor so trackpad taps feel precise */
+    #webglContainer.place-mode {
+      cursor: crosshair;
+    }
+
+    #webglContainer:not(.place-mode):active {
+      cursor: grabbing;
+    }
+
+    /* Streamlined Exhibition Live HUD Overlays */
+    .hud-top-dashboard {
+      position: absolute;
+      top: 82px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: min(94%, 1020px);
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
+      z-index: 50;
+      pointer-events: none;
+    }
+
+    .hud-stat-card {
+      background: rgba(16, 2, 7, 0.88);
+      border: 1px solid rgba(255, 0, 51, 0.28);
+      border-radius: 10px;
+      padding: 10px 14px;
+      backdrop-filter: blur(8px);
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.6), inset 0 0 12px rgba(255, 0, 51, 0.05);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hud-stat-card::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 3px;
+      height: 100%;
+      background: #ff0033;
+      box-shadow: 0 0 8px #ff0033;
+    }
+
+    .stat-label {
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: #ff859e;
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 4px;
+    }
+
+    .stat-value {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      font-size: 1.15rem;
+      font-weight: 800;
+      color: #ffffff;
+    }
+
+    .stat-value span.crimson {
+      color: #ff0033;
+      text-shadow: 0 0 10px rgba(255, 0, 51, 0.5);
+    }
+
+    .stat-progress-bg {
+      width: 100%;
+      height: 5px;
+      background: rgba(255, 0, 51, 0.12);
+      border-radius: 3px;
+      overflow: hidden;
+      margin-top: 6px;
+    }
+
+    .stat-progress-fill {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, #ff2a5f, #ff0033);
+      border-radius: 3px;
+      box-shadow: 0 0 8px #ff0033;
+      transition: width 0.3s ease;
+    }
+
+    /* Floating Left Tool Palette (Streamlined for 60s Fast Playback) */
+    .floating-palette {
+      position: absolute;
+      left: 20px;
+      top: 175px;
+      width: 250px;
+      background: rgba(16, 2, 7, 0.92);
+      border: 1px solid rgba(255, 0, 51, 0.35);
+      border-radius: 14px;
+      padding: 14px;
+      backdrop-filter: blur(12px);
+      box-shadow: 0 12px 36px rgba(0, 0, 0, 0.8), 0 0 20px rgba(255, 0, 51, 0.15);
+      z-index: 50;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .panel-tag {
+      font-size: 0.72rem;
+      font-weight: 800;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: #ff0033;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding-bottom: 6px;
+      border-bottom: 1px solid rgba(255, 0, 51, 0.2);
+    }
+
+    .tools-list {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      max-height: 48vh;
+      overflow-y: auto;
+      padding-right: 2px;
+    }
+
+    .tool-card {
+      background: rgba(30, 3, 11, 0.8);
+      border: 1px solid rgba(255, 0, 51, 0.2);
+      border-radius: 8px;
+      padding: 8px 10px;
+      color: #e6ccd2;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      cursor: pointer;
+      transition: all 0.18s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .tool-card:hover {
+      background: rgba(255, 0, 51, 0.15);
+      border-color: #ff0033;
+      transform: translateX(3px);
+      color: #ffffff;
+    }
+
+    .tool-card.active {
+      background: rgba(255, 0, 51, 0.25);
+      border-color: #ff0033;
+      box-shadow: 0 0 14px rgba(255, 0, 51, 0.4);
+      color: #ffffff;
+    }
+
+    .tool-icon-box {
+      font-size: 1.25rem;
+      width: 32px;
+      height: 32px;
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(255, 0, 51, 0.1);
+      border: 1px solid rgba(255, 0, 51, 0.3);
+      flex-shrink: 0;
+    }
+
+    .tool-info {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .tool-title {
+      font-size: 0.82rem;
+      font-weight: 700;
+    }
+
+    .tool-meta {
+      font-size: 0.68rem;
+      font-family: ui-monospace, monospace;
+      color: #ff859e;
+      display: flex;
+      justify-content: space-between;
+    }
+
+    /* Palette Quick Action Buttons */
+    .palette-actions {
+      display: flex;
+      gap: 6px;
+      margin-top: 4px;
+    }
+
+    .btn-palette-action {
+      flex: 1;
+      background: rgba(30, 3, 11, 0.8);
+      border: 1px solid rgba(255, 0, 51, 0.25);
+      color: #ff859e;
+      padding: 7px;
+      border-radius: 6px;
+      font-size: 0.74rem;
+      font-weight: 700;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
+      transition: all 0.18s;
+    }
+
+    .btn-palette-action:hover {
+      background: rgba(255, 0, 51, 0.2);
+      border-color: #ff0033;
+      color: #ffffff;
+    }
+
+    .btn-palette-action.demolish.active {
+      background: rgba(231, 76, 60, 0.3);
+      border-color: #ff0033;
+      color: #ff2a5f;
+      box-shadow: 0 0 12px rgba(255, 0, 51, 0.4);
+    }
+
+    /* 3D Floating Laser Math Inspector Card */
+    .laser-math-overlay {
+      position: absolute;
+      right: 20px;
+      top: 175px;
+      width: 320px;
+      background: rgba(14, 1, 5, 0.94);
+      border: 1.5px solid #ff0033;
+      border-radius: 14px;
+      padding: 16px;
+      backdrop-filter: blur(14px);
+      box-shadow: 0 16px 40px rgba(0, 0, 0, 0.85), 0 0 25px rgba(255, 0, 51, 0.25);
+      z-index: 50;
+      display: none;
+      flex-direction: column;
+      gap: 12px;
+      animation: laserAppear 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    @keyframes laserAppear {
+      from { opacity: 0; transform: translateX(20px) scale(0.96); }
+      to { opacity: 1; transform: translateX(0) scale(1); }
+    }
+
+    .laser-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid rgba(255, 0, 51, 0.3);
+      padding-bottom: 8px;
+    }
+
+    .laser-title {
+      font-size: 0.86rem;
+      font-weight: 800;
+      color: #ffffff;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+    }
+
+    .laser-title span.pulse-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #ff0033;
+      box-shadow: 0 0 10px #ff0033;
+      animation: laserPulse 1s infinite alternate;
+    }
+
+    @keyframes laserPulse {
+      from { transform: scale(0.8); opacity: 0.6; }
+      to { transform: scale(1.3); opacity: 1; }
+    }
+
+    .laser-close-btn {
+      background: none;
+      border: none;
+      color: #ff859e;
+      cursor: pointer;
+      font-size: 1.1rem;
+      line-height: 1;
+    }
+
+    .laser-close-btn:hover {
+      color: #ffffff;
+    }
+
+    /* Math Scanner Sequence Displays */
+    .scan-step-box {
+      background: rgba(26, 2, 9, 0.8);
+      border: 1px solid rgba(255, 0, 51, 0.25);
+      border-radius: 8px;
+      padding: 10px 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      position: relative;
+    }
+
+    .scan-step-box.scanning {
+      border-color: #ff0033;
+      box-shadow: inset 0 0 15px rgba(255, 0, 51, 0.15);
+    }
+
+    .scan-tag {
+      font-size: 0.68rem;
+      text-transform: uppercase;
+      color: #ff859e;
+      letter-spacing: 0.05em;
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .scan-formula {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      font-size: 0.88rem;
+      font-weight: 700;
+      color: #ffffff;
+    }
+
+    .scan-formula span.highlight {
+      color: #ff0033;
+      text-shadow: 0 0 8px rgba(255, 0, 51, 0.6);
+    }
+
+    .laser-cost-display {
+      background: rgba(255, 0, 51, 0.12);
+      border: 1px solid rgba(255, 0, 51, 0.4);
+      border-radius: 8px;
+      padding: 8px 12px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-family: ui-monospace, monospace;
+    }
+
+    .laser-cost-val {
+      font-size: 1.05rem;
+      font-weight: 800;
+      color: #ff0033;
+      text-shadow: 0 0 10px rgba(255, 0, 51, 0.4);
+    }
+
+    .btn-laser-scan-repeat {
+      background: rgba(255, 0, 51, 0.2);
+      border: 1px solid #ff0033;
+      color: #ffffff;
+      padding: 8px;
+      border-radius: 6px;
+      font-size: 0.78rem;
+      font-weight: 700;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      transition: all 0.2s;
+    }
+
+    .btn-laser-scan-repeat:hover {
+      background: #ff0033;
+      box-shadow: 0 0 15px rgba(255, 0, 51, 0.5);
+    }
+
+    /* 3D Instructions Footer Bar */
+    .controls-hint-bar {
+      position: absolute;
+      bottom: 16px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(14, 1, 5, 0.85);
+      border: 1px solid rgba(255, 0, 51, 0.25);
+      border-radius: 20px;
+      padding: 6px 18px;
+      font-size: 0.76rem;
+      color: #ff859e;
+      letter-spacing: 0.04em;
+      z-index: 50;
+      backdrop-filter: blur(8px);
+      display: flex;
+      gap: 16px;
+      pointer-events: none;
+    }
+
+    .controls-hint-bar span strong {
+      color: #ffffff;
+    }
+
+    /* ==========================================================================
+       04 CITY EVALUATION REPORT POP-UP MODAL
+       ========================================================================== */
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: rgba(5, 0, 2, 0.88);
+      backdrop-filter: blur(10px);
+      z-index: 2000;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      animation: modalFade 0.25s ease;
+    }
+
+    @keyframes modalFade {
+      from { opacity: 0; transform: scale(0.97); }
+      to { opacity: 1; transform: scale(1); }
+    }
+
+    .modal-card {
+      background: #120106;
+      border: 2px solid #ff0033;
+      border-radius: 16px;
+      max-width: 680px;
+      width: 100%;
+      max-height: 90vh;
+      overflow-y: auto;
+      padding: 24px;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.9), 0 0 40px rgba(255, 0, 51, 0.35);
+      position: relative;
+    }
+
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid rgba(255, 0, 51, 0.3);
+      padding-bottom: 12px;
+      margin-bottom: 18px;
+    }
+
+    .modal-header h2 {
+      font-size: 1.4rem;
+      font-weight: 900;
+      color: #ffffff;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .modal-header h2 span {
+      color: #ff0033;
+    }
+
+    .modal-close-btn {
+      background: #21030b;
+      border: 1px solid rgba(255, 0, 51, 0.3);
+      color: #ff859e;
+      width: 32px;
+      height: 32px;
+      border-radius: 8px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.1rem;
+    }
+
+    .modal-close-btn:hover {
+      color: #ffffff;
+      border-color: #ff0033;
+    }
+
+    /* Score Radial Banner */
+    .score-radial-wrapper {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      background: linear-gradient(135deg, rgba(255, 0, 51, 0.1), rgba(30, 2, 10, 0.6));
+      border: 1px solid rgba(255, 0, 51, 0.3);
+      border-radius: 12px;
+      padding: 16px 20px;
+      margin-bottom: 18px;
+    }
+
+    .score-big-circle {
+      width: 90px;
+      height: 90px;
+      border-radius: 50%;
+      border: 4px solid #ff0033;
+      box-shadow: 0 0 20px rgba(255, 0, 51, 0.5), inset 0 0 15px rgba(255, 0, 51, 0.2);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .score-circle-num {
+      font-family: ui-monospace, monospace;
+      font-size: 1.6rem;
+      font-weight: 900;
+      color: #ffffff;
+      line-height: 1;
+    }
+
+    .score-circle-sub {
+      font-size: 0.62rem;
+      color: #ff859e;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .score-meta-text {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .score-grade-pill {
+      font-size: 0.76rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      padding: 3px 10px;
+      border-radius: 12px;
+      background: rgba(255, 0, 51, 0.2);
+      border: 1px solid #ff0033;
+      color: #ff2a5f;
+      width: fit-content;
+    }
+
+    .score-headline {
+      font-size: 1.15rem;
+      font-weight: 800;
+      color: #ffffff;
+    }
+
+    .score-desc {
+      font-size: 0.8rem;
+      color: #e6ccd2;
+      line-height: 1.4;
+    }
+
+    /* Modal Grid Metrics */
+    .modal-metrics-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 10px;
+      margin-bottom: 18px;
+    }
+
+    .metric-box {
+      background: #180209;
+      border: 1px solid rgba(255, 0, 51, 0.2);
+      border-radius: 8px;
+      padding: 10px 12px;
+    }
+
+    .metric-box-title {
+      font-size: 0.68rem;
+      text-transform: uppercase;
+      color: #ff859e;
+      letter-spacing: 0.05em;
+      margin-bottom: 3px;
+    }
+
+    .metric-box-val {
+      font-family: ui-monospace, monospace;
+      font-size: 1.1rem;
+      font-weight: 800;
+      color: #ffffff;
+    }
+
+    .metric-box-sub {
+      font-size: 0.72rem;
+      color: #a3707b;
+      margin-top: 2px;
+    }
+
+    /* Modal Footer Buttons */
+    .modal-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 10px;
+    }
+
+    .btn-modal-close {
+      background: #21030b;
+      border: 1px solid rgba(255, 0, 51, 0.3);
+      color: #e6ccd2;
+      padding: 8px 16px;
+      border-radius: 6px;
+      font-size: 0.82rem;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .btn-modal-close:hover {
+      background: #330411;
+      color: #ffffff;
+    }
+
+    /* Toast Notification */
+    .toast-pill {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      background: #1c0208;
+      border: 1px solid #ff0033;
+      color: #ffffff;
+      padding: 10px 18px;
+      border-radius: 8px;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.7), 0 0 16px rgba(255, 0, 51, 0.3);
+      font-size: 0.82rem;
+      display: none;
+      align-items: center;
+      gap: 8px;
+      z-index: 1000;
+    }
+
+    /* Responsive */
+    @media (max-width: 900px) {
+      .hud-top-dashboard {
+        grid-template-columns: repeat(2, 1fr);
+      }
+      .floating-palette {
+        width: 220px;
+      }
+      .laser-math-overlay {
+        width: 280px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Top Navigation Bar -->
+  <header>
+    <div class="brand-group">
+      <div class="brand-title">🏙️ BUILD YOUR <span>DREAM CITY</span></div>
+      <div class="brand-sub">The Mathematics of Urban Planning // 3D WebGL Exhibition</div>
+    </div>
+
+    <!-- Active Stage Pipeline -->
+    <div class="pipeline-bar">
+      <div class="pipeline-step active">01 DESIGN</div>
+      <span style="color:#4a1e27;">→</span>
+      <div class="pipeline-step active">02 CALCULATE</div>
+      <span style="color:#4a1e27;">→</span>
+      <div class="pipeline-step active">03 OPTIMIZE</div>
+      <span style="color:#4a1e27;">→</span>
+      <div class="pipeline-step active">04 EVALUATE</div>
+    </div>
+
+    <!-- Action Group -->
+    <div class="header-actions">
+      <!-- ① Orbit / Place mode toggle — the key fix for Mac trackpad users -->
+      <button class="btn-mode-toggle place-active" id="btnModeToggle"
+              title="Toggle between camera orbit and building placement">
+        <span class="mode-label" id="modeIcon">🏗️</span>
+        <span class="mode-label" id="modeLabel">Place Building</span>
+      </button>
+
+      <button class="btn-sound" id="btnSoundToggle">
+        <span id="soundIcon">🔊</span> <span id="soundLabel">Sound: ON</span>
+      </button>
+      <button class="btn-report-eval" id="btnOpenReport">
+        📊 Final City Evaluation
+      </button>
+    </div>
+  </header>
+
+  <!-- Fullscreen 3D Three.js Container -->
+  <div id="webglContainer"></div>
+
+  <!-- Top Real-Time HUD Dashboard (Budget, Land, Citizens, Efficiency) -->
+  <div class="hud-top-dashboard">
+    <!-- Land Allocation -->
+    <div class="hud-stat-card">
+      <div class="stat-label">
+        <span>📐 Land Usage</span>
+        <span id="hudLandPct">0.0%</span>
+      </div>
+      <div class="stat-value"><span id="hudLandUsed">0</span> / 10,000 m²</div>
+      <div class="stat-progress-bg">
+        <div class="stat-progress-fill" id="hudLandBar"></div>
+      </div>
+    </div>
+
+    <!-- Municipal Budget -->
+    <div class="hud-stat-card">
+      <div class="stat-label">
+        <span>💰 Municipal Budget</span>
+        <span id="hudBudgetSpent">Spent: ₹0</span>
+      </div>
+      <div class="stat-value"><span class="crimson" id="hudBudgetRemaining">₹10.00 Cr</span></div>
+      <div class="stat-progress-bg">
+        <div class="stat-progress-fill" id="hudBudgetBar"></div>
+      </div>
+    </div>
+
+    <!-- Citizens Housed -->
+    <div class="hud-stat-card">
+      <div class="stat-label">
+        <span>👥 Population Housed</span>
+        <span id="hudPopPct">0%</span>
+      </div>
+      <div class="stat-value"><span id="hudPopCurrent">0</span> / 5,000</div>
+      <div class="stat-progress-bg">
+        <div class="stat-progress-fill" id="hudPopBar"></div>
+      </div>
+    </div>
+
+    <!-- Live City Efficiency Score -->
+    <div class="hud-stat-card">
+      <div class="stat-label">
+        <span>⚡ City Efficiency</span>
+        <span id="hudScoreTier">Assessing...</span>
+      </div>
+      <div class="stat-value"><span class="crimson" id="hudScoreVal">0%</span></div>
+      <div class="stat-progress-bg">
+        <div class="stat-progress-fill" id="hudScoreBar"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Left Floating 3D Building Palette -->
+  <div class="floating-palette">
+    <div class="panel-tag">⚡ 3D Architecture Palette</div>
+    <div class="tools-list" id="paletteList">
+      <!-- Populated dynamically via JS with 3D extrudable building types -->
+    </div>
+
+    <!-- Palette Actions -->
+    <div class="palette-actions">
+      <button class="btn-palette-action" id="btnToolDemolish">
+        🚜 Demolish (80%)
+      </button>
+      <button class="btn-palette-action" id="btnClearAll">
+        🗑️ Clear
+      </button>
+    </div>
+  </div>
+
+  <!-- Right Floating Animated 3D Laser Math Inspector -->
+  <div class="laser-math-overlay" id="laserOverlay">
+    <div class="laser-header">
+      <div class="laser-title">
+        <span class="pulse-dot"></span>
+        <span id="scannerBuildingName">High-Rise Tower</span>
+      </div>
+      <button class="laser-close-btn" id="btnCloseScanner">✕</button>
+    </div>
+
+    <!-- Laser Step 1: Perimeter & Footprint -->
+    <div class="scan-step-box scanning" id="scanStepPerimeter">
+      <div class="scan-tag">
+        <span>STEP 1: 2D GROUND PERIMETER SCAN</span>
+        <span style="color:#ff0033;">[LASER TRACE]</span>
+      </div>
+      <div class="scan-formula" id="scanPerimeterFormula">
+        Perimeter = 2(L + W) = <span class="highlight">80 m</span>
+      </div>
+      <div class="scan-formula" id="scanAreaFormula" style="margin-top:2px;">
+        Footprint Area = L × W = <span class="highlight">400 m²</span>
+      </div>
+    </div>
+
+    <!-- Laser Step 2: 3D Height & Volume Extrusion Sweep -->
+    <div class="scan-step-box" id="scanStepVolume">
+      <div class="scan-tag">
+        <span>STEP 2: 3D HEIGHT &amp; VOLUME SWEEP</span>
+        <span style="color:#ff859e;">[Z-AXIS]</span>
+      </div>
+      <div class="scan-formula" id="scanHeightFormula">
+        Building Height (h) = <span class="highlight">60 m</span>
+      </div>
+      <div class="scan-formula" id="scanVolumeFormula" style="margin-top:2px;">
+        3D Volume = Area × Height = <span class="highlight">24,000 m³</span>
+      </div>
+    </div>
+
+    <!-- Cost Breakdown -->
+    <div class="laser-cost-display">
+      <span style="font-size:0.75rem; color:#ff859e;">Construction Cost:</span>
+      <span class="laser-cost-val" id="scanCostVal">₹60,00,000</span>
+    </div>
+
+    <button class="btn-laser-scan-repeat" id="btnRescan">
+      ⚡ Re-Scan 3D Math Geometry
+    </button>
+  </div>
+
+  <!-- Bottom 3D Camera Controls Hint -->
+  <div class="controls-hint-bar">
+    <span>🖱️ <strong>Left Click / Drag Grid:</strong> Place Structure</span>
+    <span>🖱️ <strong>Right Click + Drag:</strong> Rotate 3D View</span>
+    <span>🔍 <strong>Scroll:</strong> Zoom</span>
+    <span>📐 <strong>Click Building:</strong> Trigger Laser Math Scanner</span>
+  </div>
+
+  <!-- City Evaluation Report Pop-Up Modal -->
+  <div class="modal-overlay" id="evalModal">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h2>🏙️ CITY EVALUATION <span>REPORT</span></h2>
+        <button class="modal-close-btn" id="btnCloseModal">✕</button>
+      </div>
+
+      <!-- Score Radial Banner -->
+      <div class="score-radial-wrapper">
+        <div class="score-big-circle">
+          <span class="score-circle-num" id="modalScoreNum">0%</span>
+          <span class="score-circle-sub">Efficiency</span>
+        </div>
+        <div class="score-meta-text">
+          <span class="score-grade-pill" id="modalGradePill">Grade: Calculating...</span>
+          <div class="score-headline" id="modalHeadline">Urban Architecture Assessment</div>
+          <div class="score-desc" id="modalDesc">Evaluating geometric balance, zoning, infrastructure, and fiscal discipline.</div>
+        </div>
+      </div>
+
+      <!-- Metrics Grid -->
+      <div class="modal-metrics-grid">
+        <div class="metric-box">
+          <div class="metric-box-title">Land Efficiency (% Used)</div>
+          <div class="metric-box-val" id="modalLandVal">0.0%</div>
+          <div class="metric-box-sub" id="modalLandSub">0 / 10,000 m²</div>
+        </div>
+
+        <div class="metric-box">
+          <div class="metric-box-title">Green Space Allocation</div>
+          <div class="metric-box-val" id="modalGreenVal">0.0%</div>
+          <div class="metric-box-sub" id="modalGreenSub">Target: ≥ 15% Eco Parks</div>
+        </div>
+
+        <div class="metric-box">
+          <div class="metric-box-title">3D Construction Mass</div>
+          <div class="metric-box-val" id="modalVolumeVal">0 m³</div>
+          <div class="metric-box-sub" id="modalVolumeSub">Total architectural volume</div>
+        </div>
+
+        <div class="metric-box">
+          <div class="metric-box-title">Municipal Budget Remaining</div>
+          <div class="metric-box-val" id="modalBudgetVal">₹10.00 Cr</div>
+          <div class="metric-box-sub" id="modalBudgetSub">Cap: ₹10,00,00,000</div>
+        </div>
+
+        <div class="metric-box" style="grid-column: span 2;">
+          <div class="metric-box-title">Citizens Housed (Target: 5,000)</div>
+          <div class="metric-box-val" id="modalPopVal">0 / 5,000</div>
+          <div class="metric-box-sub">Calculated mathematically at 1 citizen per 12 m³ residential living volume</div>
+        </div>
+      </div>
+
+      <!-- Modal Actions -->
+      <div class="modal-actions">
+        <button class="btn-modal-close" id="btnResumeBuilding">
+          ✏️ Return to 3D Blueprint
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Notification -->
+  <div class="toast-pill" id="toastPill">
+    <span id="toastIcon">ℹ️</span>
+    <span id="toastText">Action complete</span>
+  </div>
+
+  <!-- ==========================================================================
+       05 JAVASCRIPT: 3D THREE.JS WEBGL ENGINE & LASER SCANNER
+       ========================================================================== */ -->
+  <script>
+    // ==========================================================================
+    // 01 ARCHITECTURAL CONSTANTS & CONFIGURATION
+    // ==========================================================================
+    const GRID_COLS = 20;       // 20 columns (200m)
+    const GRID_ROWS = 15;       // 15 rows (150m)
+    const CELL_SIZE = 10;       // 10 units in 3D world = 10 meters real world scale
+    const TOTAL_BUDGET = 100000000; // ₹10 Crore
+    const LAND_LIMIT_M2 = 10000;    // 10,000 m² (100 cells)
+    const TARGET_POPULATION = 5000; // 5,000 citizens
+
+    // 3D Building specifications with procedural extrusion heights & cost models
+    const BUILDING_TYPES = [
+      {
+        id: 'commercial',
+        name: 'High-Rise Tower',
+        icon: '🏢',
+        height: 60,           // 60m vertical height
+        color: 0x00d2ff,      // Cyan accent with crimson structural frame
+        wireColor: 0xff0033,
+        costModel: 'volume',
+        rate: 250,            // ₹250 / m³
+        desc: '60m Sky High-Rise'
+      },
+      {
+        id: 'residential',
+        name: 'Residential Block',
+        icon: '🏠',
+        height: 12,           // 12m height (4 floors)
+        color: 0xff4d6d,      // Crimson coral
+        wireColor: 0xff0033,
+        costModel: 'volume',
+        rate: 300,            // ₹300 / m³
+        desc: '100 Citizens / 10m Cell'
+      },
+      {
+        id: 'park',
+        name: 'Cyber Park Zone',
+        icon: '🌳',
+        height: 2,            // 2m park elevation
+        color: 0x00ff9d,      // Bio green neon
+        wireColor: 0x00ff9d,
+        costModel: 'area',
+        rate: 1500,           // ₹1,500 / m²
+        desc: 'Eco Green Space'
+      },
+      {
+        id: 'energy',
+        name: 'Energy Core',
+        icon: '⚡',
+        height: 22,           // 22m generator reactor
+        color: 0xffcc00,      // Electric gold
+        wireColor: 0xff0033,
+        costModel: 'volume',
+        rate: 500,            // ₹500 / m³
+        desc: 'Municipal Power Plant'
+      },
+      {
+        id: 'road',
+        name: 'Transport Highway',
+        icon: '🛣️',
+        height: 0.5,          // Ground roadway
+        color: 0x4a0a16,      // Dark asphalt with crimson markings
+        wireColor: 0xff0033,
+        costModel: 'length',
+        rate: 10000,          // ₹10,000 / meter
+        desc: 'Paved Transit Grid'
+      },
+      {
+        id: 'school',
+        name: 'Public Academy',
+        icon: '🏫',
+        height: 15,           // 15m education campus
+        color: 0xc77dff,      // Neon purple
+        wireColor: 0xff0033,
+        costModel: 'volume',
+        rate: 350,            // ₹350 / m³
+        desc: 'School Facility'
+      },
+      {
+        id: 'hospital',
+        name: 'Medical Complex',
+        icon: '🏥',
+        height: 25,           // 25m medical hub
+        color: 0xff1744,      // Crimson cross red
+        wireColor: 0xffffff,
+        costModel: 'volume',
+        rate: 450,            // ₹450 / m³
+        desc: 'Emergency Hospital'
+      }
+    ];
+
+    // ==========================================================================
+    // 02 STATE MANAGEMENT
+    // ==========================================================================
+    let currentTool = BUILDING_TYPES[0]; // Active placement tool
+    let placedBuildings = [];          // Placed 3D building instances
+    let isDemolishMode = false;
+    let selectedBuilding = null;
+    let soundEnabled = true;
+
+    // ── Interaction mode: true = Place-Building, false = Orbit Camera ────────
+    // In Place mode: OrbitControls is fully disabled so Mac trackpad taps
+    // land precisely on the ground plane without being swallowed as camera drags.
+    let isPlaceMode = true;
+
+    // Laser Math Scanner Animation State
+    let isLaserScanning = false;
+    let laserScanProgress = 0; // 0 to 1
+    let laserMeshGroup = null; // Three.js group for laser visuals
+
+    // Web Audio State
+    let audioCtx = null;
+
+    // ==========================================================================
+    // 03 THREE.JS 3D SCENE SETUP
+    // ==========================================================================
+    const container = document.getElementById('webglContainer');
+    const scene = new THREE.Scene();
+    scene.background = new THREE.Color(0x0a0003);
+    scene.fog = new THREE.FogExp2(0x0a0003, 0.0035);
+
+    // Camera setup (Isometric perspective)
+    const camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 1, 1000);
+    camera.position.set(130, 150, 180);
+
+    const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: false });
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    renderer.shadowMap.enabled = true;
+    renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+    container.appendChild(renderer.domElement);
+
+    // Orbit Controls Setup (with smooth damping & offline fallback)
+    let controls = null;
+    if (typeof THREE.OrbitControls !== 'undefined') {
+      controls = new THREE.OrbitControls(camera, renderer.domElement);
+      controls.enableDamping = true;
+      controls.dampingFactor = 0.08;
+      controls.maxPolarAngle = Math.PI / 2.1; // Don't go below ground
+      controls.minDistance = 30;
+      controls.maxDistance = 350;
+      controls.target.set(0, 0, 0);
+      // Default to Place mode → disable controls so trackpad taps reach canvas
+      controls.enabled = false;
+    } else {
+      // Offline fallback 3D camera orbital rotation & zoom
+      let isCamDragging = false;
+      let camPrev = { x: 0, y: 0 };
+      let camSpherical = { radius: 240, theta: Math.PI / 4, phi: Math.PI / 3.2 };
+
+      function syncCamera() {
+        camera.position.x = camSpherical.radius * Math.sin(camSpherical.phi) * Math.sin(camSpherical.theta);
+        camera.position.y = camSpherical.radius * Math.cos(camSpherical.phi);
+        camera.position.z = camSpherical.radius * Math.sin(camSpherical.phi) * Math.cos(camSpherical.theta);
+        camera.lookAt(0, 0, 0);
+      }
+      syncCamera();
+
+      renderer.domElement.addEventListener('contextmenu', e => e.preventDefault());
+      window.addEventListener('mousedown', (e) => {
+        if (e.button === 2) { // Right click drag to rotate
+          isCamDragging = true;
+          camPrev = { x: e.clientX, y: e.clientY };
+        }
+      });
+      window.addEventListener('mousemove', (e) => {
+        if (isCamDragging) {
+          const dx = e.clientX - camPrev.x;
+          const dy = e.clientY - camPrev.y;
+          camPrev = { x: e.clientX, y: e.clientY };
+          camSpherical.theta -= dx * 0.008;
+          camSpherical.phi = Math.max(0.15, Math.min(Math.PI / 2.1, camSpherical.phi - dy * 0.008));
+          syncCamera();
+        }
+      });
+      window.addEventListener('mouseup', () => { isCamDragging = false; });
+      renderer.domElement.addEventListener('wheel', (e) => {
+        camSpherical.radius = Math.max(30, Math.min(350, camSpherical.radius + e.deltaY * 0.2));
+        syncCamera();
+      });
+    }
+
+    // Lights
+    const ambientLight = new THREE.AmbientLight(0xffebee, 0.6);
+    scene.add(ambientLight);
+
+    const dirLight = new THREE.DirectionalLight(0xff0033, 1.2);
+    dirLight.position.set(100, 180, 80);
+    dirLight.castShadow = true;
+    dirLight.shadow.mapSize.width = 2048;
+    dirLight.shadow.mapSize.height = 2048;
+    dirLight.shadow.camera.near = 10;
+    dirLight.shadow.camera.far = 400;
+    dirLight.shadow.camera.left = -150;
+    dirLight.shadow.camera.right = 150;
+    dirLight.shadow.camera.top = 150;
+    dirLight.shadow.camera.bottom = -150;
+    scene.add(dirLight);
+
+    const blueLight = new THREE.DirectionalLight(0x00d2ff, 0.5);
+    blueLight.position.set(-100, 100, -80);
+    scene.add(blueLight);
+
+    // 3D Grid Plane (Ground Parcel: 200m x 150m centered at origin)
+    const gridTotalWidth = GRID_COLS * CELL_SIZE; // 200
+    const gridTotalDepth = GRID_ROWS * CELL_SIZE; // 150
+
+    // Visible cyberpunk ground (aesthetic only — NOT used for raycasting)
+    const visGroundGeo = new THREE.PlaneGeometry(gridTotalWidth, gridTotalDepth);
+    const visGroundMat = new THREE.MeshStandardMaterial({
+      color: 0x110106,
+      roughness: 0.7,
+      metalness: 0.3
+    });
+    const visGroundMesh = new THREE.Mesh(visGroundGeo, visGroundMat);
+    visGroundMesh.rotation.x = -Math.PI / 2;
+    visGroundMesh.receiveShadow = true;
+    scene.add(visGroundMesh);
+
+    // Large invisible raycasting plane — covers the whole view so hits always register
+    const groundMesh = new THREE.Mesh(
+      new THREE.PlaneGeometry(500, 500),
+      new THREE.MeshBasicMaterial({ visible: false, side: THREE.DoubleSide })
+    );
+    groundMesh.rotation.x = -Math.PI / 2;
+    groundMesh.position.y = 0.01; // tiny lift above y=0 to avoid z-fight
+    scene.add(groundMesh);
+
+    // Glowing Crimson Neon Grid Lines
+    const gridHelper = new THREE.GridHelper(gridTotalWidth, GRID_COLS, 0xff0033, 0x4a0011);
+    gridHelper.position.y = 0.05;
+    // Scale grid helper to match 200 x 150
+    gridHelper.scale.set(1, 1, gridTotalDepth / gridTotalWidth);
+    scene.add(gridHelper);
+
+    // Neon Cyber Boundary Perimeter
+    const boundaryPoints = [
+      new THREE.Vector3(-gridTotalWidth / 2, 0.1, -gridTotalDepth / 2),
+      new THREE.Vector3(gridTotalWidth / 2, 0.1, -gridTotalDepth / 2),
+      new THREE.Vector3(gridTotalWidth / 2, 0.1, gridTotalDepth / 2),
+      new THREE.Vector3(-gridTotalWidth / 2, 0.1, gridTotalDepth / 2),
+      new THREE.Vector3(-gridTotalWidth / 2, 0.1, -gridTotalDepth / 2)
+    ];
+    const boundaryGeo = new THREE.BufferGeometry().setFromPoints(boundaryPoints);
+    const boundaryMat = new THREE.LineBasicMaterial({ color: 0xff0033, linewidth: 2 });
+    const boundaryLine = new THREE.Line(boundaryGeo, boundaryMat);
+    scene.add(boundaryLine);
+
+    // ── Ghost Building Preview ──────────────────────────────────────────────
+    // A semi-transparent crimson box that snaps to the grid under the cursor,
+    // giving visitors immediate visual feedback on where their building will land.
+    const ghostGroup = new THREE.Group();
+    scene.add(ghostGroup);
+
+    // Ghost body: height will be updated dynamically to match the selected tool
+    const ghostBodyGeo = new THREE.BoxGeometry(CELL_SIZE * 0.9, 1, CELL_SIZE * 0.9);
+    const ghostBodyMat = new THREE.MeshStandardMaterial({
+      color: 0xff2a5f,
+      transparent: true,
+      opacity: 0.38,
+      emissive: 0xff0033,
+      emissiveIntensity: 0.55,
+      roughness: 0.4,
+      metalness: 0.3,
+      depthWrite: false  // always visible through other objects
+    });
+    const ghostBody = new THREE.Mesh(ghostBodyGeo, ghostBodyMat);
+    ghostGroup.add(ghostBody);
+
+    // Ghost wireframe edge outline
+    const ghostEdges = new THREE.LineSegments(
+      new THREE.EdgesGeometry(ghostBodyGeo),
+      new THREE.LineBasicMaterial({ color: 0xff0033, linewidth: 2 })
+    );
+    ghostGroup.add(ghostEdges);
+    ghostGroup.visible = false;
+
+    // Helper: rebuild ghost geometry when tool changes
+    function updateGhostForTool(tool) {
+      const h = Math.max(tool.height, 1.5); // min 1.5m so it's always visible
+      ghostBody.scale.set(1, h, 1);
+      ghostBody.position.y = h / 2;
+      ghostEdges.scale.set(1, h, 1);
+      ghostEdges.position.y = h / 2;
+      ghostBodyMat.color.setHex(0xff2a5f);
+    }
+    updateGhostForTool(currentTool);
+
+    // Legacy hover vars — kept so existing hover refs don't crash
+    const hoverCursorMat = ghostBodyMat; // alias for colour updates below
+    const hoverCursor    = { visible: false, position: { set() {} } }; // no-op dummy
+    const hoverWire      = { visible: false, position: { set() {} } }; // no-op dummy
+
+    // Raycaster for 3D mouse picking
+    const raycaster = new THREE.Raycaster();
+    const mouse = new THREE.Vector2();
+
+    // ==========================================================================
+    // 04 SYNTHESIZED WEB AUDIO (ZERO EXTERNAL FILES)
+    // ==========================================================================
+    function initAudioContext() {
+      if (!audioCtx) {
+        const AudioContext = window.AudioContext || window.webkitAudioContext;
+        if (AudioContext) audioCtx = new AudioContext();
+      }
+      if (audioCtx && audioCtx.state === 'suspended') {
+        audioCtx.resume();
+      }
+    }
+
+    function playSoundEffect(type) {
+      if (!soundEnabled) return;
+      initAudioContext();
+      if (!audioCtx) return;
+
+      const now = audioCtx.currentTime;
+
+      if (type === 'extrude') {
+        // Futuristic cyber thud & upward rising chirp
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.type = 'sawtooth';
+        osc.frequency.setValueAtTime(140, now);
+        osc.frequency.exponentialRampToValueAtTime(520, now + 0.18);
+        gain.gain.setValueAtTime(0.2, now);
+        gain.gain.exponentialRampToValueAtTime(0.01, now + 0.2);
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        osc.start(now);
+        osc.stop(now + 0.22);
+
+      } else if (type === 'laser') {
+        // High-tech resonant laser math scan sweep
+        const osc = audioCtx.createOscillator();
+        const filter = audioCtx.createBiquadFilter();
+        const gain = audioCtx.createGain();
+
+        osc.type = 'sawtooth';
+        osc.frequency.setValueAtTime(1200, now);
+        osc.frequency.exponentialRampToValueAtTime(320, now + 0.25);
+        osc.frequency.exponentialRampToValueAtTime(1600, now + 0.5);
+
+        filter.type = 'bandpass';
+        filter.frequency.setValueAtTime(800, now);
+        filter.Q.value = 4;
+
+        gain.gain.setValueAtTime(0.22, now);
+        gain.gain.exponentialRampToValueAtTime(0.01, now + 0.55);
+
+        osc.connect(filter);
+        filter.connect(gain);
+        gain.connect(audioCtx.destination);
+
+        osc.start(now);
+        osc.stop(now + 0.6);
+
+      } else if (type === 'demolish') {
+        // Deep crunch disintegration
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.type = 'triangle';
+        osc.frequency.setValueAtTime(150, now);
+        osc.frequency.exponentialRampToValueAtTime(30, now + 0.24);
+        gain.gain.setValueAtTime(0.3, now);
+        gain.gain.exponentialRampToValueAtTime(0.01, now + 0.25);
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        osc.start(now);
+        osc.stop(now + 0.26);
+
+      } else if (type === 'fanfare') {
+        // Victorious celebration arpeggio
+        [523.25, 659.25, 783.99, 1046.50].forEach((freq, i) => {
+          const osc = audioCtx.createOscillator();
+          const gain = audioCtx.createGain();
+          const t = now + (i * 0.1);
+          osc.type = 'triangle';
+          osc.frequency.setValueAtTime(freq, t);
+          gain.gain.setValueAtTime(0.2, t);
+          gain.gain.exponentialRampToValueAtTime(0.001, t + 0.3);
+          osc.connect(gain);
+          gain.connect(audioCtx.destination);
+          osc.start(t);
+          osc.stop(t + 0.32);
+        });
+      }
+    }
+
+    // ==========================================================================
+    // 05 3D PROCEDURAL BUILDING GENERATOR
+    // ==========================================================================
+    function create3DBuildingMesh(tool, col, row) {
+      const group = new THREE.Group();
+
+      const xPos = (col - GRID_COLS / 2 + 0.5) * CELL_SIZE;
+      const zPos = (row - GRID_ROWS / 2 + 0.5) * CELL_SIZE;
+      const targetHeight = tool.height;
+
+      let buildingMesh = null;
+
+      if (tool.id === 'park') {
+        // Bio Park zone: grass turf + futuristic cyber dome / mini trees
+        const turfGeo = new THREE.BoxGeometry(CELL_SIZE * 0.94, 1.2, CELL_SIZE * 0.94);
+        const turfMat = new THREE.MeshStandardMaterial({ color: 0x07301c, roughness: 0.8 });
+        const turf = new THREE.Mesh(turfGeo, turfMat);
+        turf.position.y = 0.6;
+        turf.receiveShadow = true;
+        group.add(turf);
+
+        // Holographic biodome
+        const domeGeo = new THREE.SphereGeometry(CELL_SIZE * 0.38, 16, 12, 0, Math.PI * 2, 0, Math.PI / 2);
+        const domeMat = new THREE.MeshStandardMaterial({
+          color: 0x00ff9d,
+          transparent: true,
+          opacity: 0.55,
+          roughness: 0.2,
+          metalness: 0.8
+        });
+        const dome = new THREE.Mesh(domeGeo, domeMat);
+        dome.position.y = 1.2;
+        group.add(dome);
+
+        buildingMesh = turf;
+
+      } else if (tool.id === 'energy') {
+        // Nuclear Fusion / Power Station: Cylindrical core with glowing rings
+        const coreGeo = new THREE.CylinderGeometry(CELL_SIZE * 0.35, CELL_SIZE * 0.45, targetHeight, 16);
+        const coreMat = new THREE.MeshStandardMaterial({
+          color: 0x24020a,
+          metalness: 0.9,
+          roughness: 0.2
+        });
+        const core = new THREE.Mesh(coreGeo, coreMat);
+        core.position.y = targetHeight / 2;
+        core.castShadow = true;
+        core.receiveShadow = true;
+        group.add(core);
+
+        // Glowing reactor ring
+        const ringGeo = new THREE.TorusGeometry(CELL_SIZE * 0.42, 0.4, 8, 24);
+        const ringMat = new THREE.MeshBasicMaterial({ color: 0xffcc00 });
+        const ring = new THREE.Mesh(ringGeo, ringMat);
+        ring.rotation.x = Math.PI / 2;
+        ring.position.y = targetHeight * 0.75;
+        group.add(ring);
+
+        buildingMesh = core;
+
+      } else if (tool.id === 'road') {
+        // Paved Transport Highway
+        const roadGeo = new THREE.BoxGeometry(CELL_SIZE * 0.98, 0.4, CELL_SIZE * 0.98);
+        const roadMat = new THREE.MeshStandardMaterial({ color: 0x212124, roughness: 0.9 });
+        const road = new THREE.Mesh(roadGeo, roadMat);
+        road.position.y = 0.2;
+        road.receiveShadow = true;
+        group.add(road);
+
+        // Center lane neon dashed line
+        const dashGeo = new THREE.PlaneGeometry(1.2, CELL_SIZE * 0.6);
+        const dashMat = new THREE.MeshBasicMaterial({ color: 0xffffff, side: THREE.DoubleSide });
+        const dash = new THREE.Mesh(dashGeo, dashMat);
+        dash.rotation.x = -Math.PI / 2;
+        dash.position.y = 0.42;
+        group.add(dash);
+
+        buildingMesh = road;
+
+      } else {
+        // Architectural Skyscraper / Residential / Hospital / School Box
+        const bGeo = new THREE.BoxGeometry(CELL_SIZE * 0.88, targetHeight, CELL_SIZE * 0.88);
+        const bMat = new THREE.MeshStandardMaterial({
+          color: tool.color,
+          roughness: 0.35,
+          metalness: 0.6,
+          transparent: true,
+          opacity: 0.88
+        });
+        buildingMesh = new THREE.Mesh(bGeo, bMat);
+        buildingMesh.position.y = targetHeight / 2;
+        buildingMesh.castShadow = true;
+        buildingMesh.receiveShadow = true;
+        group.add(buildingMesh);
+
+        // Glowing Structural Wireframe Edges
+        const edgesGeo = new THREE.EdgesGeometry(bGeo);
+        const edgesMat = new THREE.LineBasicMaterial({ color: tool.wireColor, linewidth: 2 });
+        const edges = new THREE.LineSegments(edgesGeo, edgesMat);
+        edges.position.y = targetHeight / 2;
+        group.add(edges);
+
+        // Rooftop glowing architectural spire / beacon
+        if (tool.id === 'commercial' || tool.id === 'hospital') {
+          const spireGeo = new THREE.CylinderGeometry(0.2, 0.6, 6, 8);
+          const spireMat = new THREE.MeshBasicMaterial({ color: 0xff0033 });
+          const spire = new THREE.Mesh(spireGeo, spireMat);
+          spire.position.y = targetHeight + 3;
+          group.add(spire);
+        }
+      }
+
+      group.position.set(xPos, 0, zPos);
+
+      // Starting Extrusion Animation (grows from ground y=0 upward)
+      group.scale.set(1, 0.05, 1);
+      group.userData = {
+        animatingIn: true,
+        currentScaleY: 0.05,
+        targetScaleY: 1,
+        buildingData: {
+          col: col,
+          row: row,
+          toolId: tool.id,
+          name: tool.name,
+          icon: tool.icon,
+          height: targetHeight,
+          widthMeters: 10,
+          lengthMeters: 10,
+          areaM2: 100,
+          perimeterM: 40,
+          volumeM3: 100 * targetHeight,
+          cost: calculateCost(tool, 100, targetHeight)
+        }
+      };
+
+      scene.add(group);
+      return group;
+    }
+
+    function calculateCost(tool, area, height) {
+      if (tool.costModel === 'volume') {
+        return area * height * tool.rate;
+      } else if (tool.costModel === 'area') {
+        return area * tool.rate;
+      } else if (tool.costModel === 'length') {
+        return 10 * tool.rate;
+      }
+      return 100000;
+    }
+
+    // ==========================================================================
+    // 06 ANIMATED 3D LASER MATH SCANNER ENGINE
+    // ==========================================================================
+    function triggerLaserMathScanner(buildingGroup) {
+      const data = buildingGroup.userData.buildingData;
+      if (!data) return;
+
+      selectedBuilding = buildingGroup;
+      playSoundEffect('laser');
+
+      // Populate Floating Math Inspector HUD
+      document.getElementById('scannerBuildingName').innerHTML = `${data.icon} ${data.name}`;
+      document.getElementById('scanPerimeterFormula').innerHTML = `Perimeter = 2(L + W) = <span class="highlight">${data.perimeterM} m</span>`;
+      document.getElementById('scanAreaFormula').innerHTML = `Footprint Area = L × W = <span class="highlight">${data.areaM2} m²</span>`;
+      document.getElementById('scanHeightFormula').innerHTML = `Building Height (h) = <span class="highlight">${data.height} m</span>`;
+      document.getElementById('scanVolumeFormula').innerHTML = `3D Volume = Area × Height = <span class="highlight">${data.volumeM3.toLocaleString()} m³</span>`;
+      document.getElementById('scanCostVal').textContent = formatCurrency(data.cost);
+
+      // Open inspector card with animation
+      document.getElementById('laserOverlay').style.display = 'flex';
+
+      // Create 3D Laser Mesh Visuals
+      if (laserMeshGroup) {
+        scene.remove(laserMeshGroup);
+      }
+      laserMeshGroup = new THREE.Group();
+
+      const bWidth = CELL_SIZE * 0.95;
+      const bDepth = CELL_SIZE * 0.95;
+      const bHeight = data.height;
+
+      // 1. Bottom Perimeter Glowing Laser Loop
+      const perimeterPoints = [
+        new THREE.Vector3(-bWidth / 2, 0.2, -bDepth / 2),
+        new THREE.Vector3(bWidth / 2, 0.2, -bDepth / 2),
+        new THREE.Vector3(bWidth / 2, 0.2, bDepth / 2),
+        new THREE.Vector3(-bWidth / 2, 0.2, bDepth / 2),
+        new THREE.Vector3(-bWidth / 2, 0.2, -bDepth / 2)
+      ];
+      const pGeo = new THREE.BufferGeometry().setFromPoints(perimeterPoints);
+      const pMat = new THREE.LineBasicMaterial({ color: 0xff0033, linewidth: 3 });
+      const perimeterLaser = new THREE.Line(pGeo, pMat);
+      laserMeshGroup.add(perimeterLaser);
+
+      // 2. Translucent Laser Scanner Sweep Plane
+      const sweepGeo = new THREE.PlaneGeometry(bWidth * 1.08, bDepth * 1.08);
+      const sweepMat = new THREE.MeshBasicMaterial({
+        color: 0xff0033,
+        transparent: true,
+        opacity: 0.6,
+        side: THREE.DoubleSide
+      });
+      const sweepPlane = new THREE.Mesh(sweepGeo, sweepMat);
+      sweepPlane.rotation.x = -Math.PI / 2;
+      sweepPlane.position.y = 0.2;
+      laserMeshGroup.add(sweepPlane);
+
+      // Laser bounding ring
+      const ringWireGeo = new THREE.EdgesGeometry(sweepGeo);
+      const ringWireMat = new THREE.LineBasicMaterial({ color: 0xffffff, linewidth: 2 });
+      const ringWire = new THREE.LineSegments(ringWireGeo, ringWireMat);
+      ringWire.rotation.x = -Math.PI / 2;
+      ringWire.position.y = 0.2;
+      laserMeshGroup.add(ringWire);
+
+      laserMeshGroup.position.copy(buildingGroup.position);
+      scene.add(laserMeshGroup);
+
+      // Start animation loop for laser
+      isLaserScanning = true;
+      laserScanProgress = 0;
+
+      // Highlight step 1 then step 2
+      document.getElementById('scanStepPerimeter').className = 'scan-step-box scanning';
+      document.getElementById('scanStepVolume').className = 'scan-step-box';
+
+      showToast(`Laser Scanner tracking ${data.name}...`, '⚡');
+    }
+
+    function removeLaserVisuals() {
+      if (laserMeshGroup) {
+        scene.remove(laserMeshGroup);
+        laserMeshGroup = null;
+      }
+      isLaserScanning = false;
+    }
+
+    // ==========================================================================
+    // 07 USER INPUT HANDLING (CLICK TO PLACE / INSPECT / ROTATE)
+    // ==========================================================================
+    function getGridCellFromMouse(event) {
+      const rect = renderer.domElement.getBoundingClientRect();
+      mouse.x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
+      mouse.y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
+
+      raycaster.setFromCamera(mouse, camera);
+      const intersects = raycaster.intersectObject(groundMesh);
+
+      if (intersects.length > 0) {
+        const hit = intersects[0].point;
+
+        // Convert 3D world coordinates to grid cell col (0..19), row (0..14)
+        const col = Math.floor((hit.x + gridTotalWidth / 2) / CELL_SIZE);
+        const row = Math.floor((hit.z + gridTotalDepth / 2) / CELL_SIZE);
+
+        if (col >= 0 && col < GRID_COLS && row >= 0 && row < GRID_ROWS) {
+          return { col, row };
+        }
+      }
+      return null;
+    }
+
+    // ── Pointer move: drive ghost preview (place mode only) ──────────────────
+    renderer.domElement.addEventListener('mousemove', (e) => {
+      // Ghost only shown in place/demolish mode
+      if (!isPlaceMode) {
+        ghostGroup.visible = false;
+        return;
+      }
+
+      const cell = getGridCellFromMouse(e);
+      if (cell) {
+        const xPos = (cell.col - GRID_COLS / 2 + 0.5) * CELL_SIZE;
+        const zPos = (cell.row - GRID_ROWS / 2 + 0.5) * CELL_SIZE;
+
+        ghostGroup.position.set(xPos, 0, zPos);
+        ghostGroup.visible = true;
+
+        // Colour: bright red in demolish mode, translucent crimson otherwise
+        if (isDemolishMode) {
+          ghostBodyMat.color.setHex(0xff0033);
+          ghostBodyMat.emissive.setHex(0xff0033);
+          ghostBodyMat.opacity = 0.6;
+        } else {
+          ghostBodyMat.color.setHex(0xff2a5f);
+          ghostBodyMat.emissive.setHex(0xff0033);
+          ghostBodyMat.opacity = 0.38;
+        }
+      } else {
+        ghostGroup.visible = false;
+      }
+    });
+
+    renderer.domElement.addEventListener('mouseleave', () => {
+      ghostGroup.visible = false;
+    });
+
+    // ── PLACEMENT ENGINE (Mac Trackpad Optimised) ───────────────────────────
+    //
+    // Core idea: in PLACE MODE controls.enabled = false, so OrbitControls
+    // never sees the pointer event. Every tap goes straight to our handler.
+    // Fallback drag guard is kept for ORBIT MODE just in case.
+
+    let isDragging = false;
+    let pointerDownPos = { x: 0, y: 0 };
+
+    renderer.domElement.addEventListener('pointerdown', (e) => {
+      if (e.button !== 0) return;
+      isDragging = false;
+      pointerDownPos = { x: e.clientX, y: e.clientY };
+    });
+
+    renderer.domElement.addEventListener('pointermove', (e) => {
+      if (e.buttons !== 1) return;
+      // In orbit mode only, track drag to suppress accidental placement
+      if (!isPlaceMode) {
+        const dist = Math.hypot(e.clientX - pointerDownPos.x, e.clientY - pointerDownPos.y);
+        if (dist > 3) isDragging = true;
+      }
+    });
+
+    // ── Central placement handler ─────────────────────────────────────────
+    function handlePlacementClick(e) {
+      // In orbit mode use drag guard; in place mode every tap is intentional
+      if (!isPlaceMode && isDragging) return;
+
+      const cell = getGridCellFromMouse(e);
+      if (!cell) return;
+
+      initAudioContext();
+
+      // Check if existing building occupies this cell
+      const existingIdx = placedBuildings.findIndex(b => {
+        const d = b.userData.buildingData;
+        return d.col === cell.col && d.row === cell.row;
+      });
+
+      if (isDemolishMode) {
+        if (existingIdx !== -1) {
+          const removed = placedBuildings.splice(existingIdx, 1)[0];
+          const refund = removed.userData.buildingData.cost * 0.8;
+          scene.remove(removed);
+          if (selectedBuilding === removed) {
+            removeLaserVisuals();
+            document.getElementById('laserOverlay').style.display = 'none';
+          }
+          playSoundEffect('demolish');
+          showToast(`Demolished! 80% refund: ${formatCurrency(refund)}`, '♻️');
+          updateAllHUDMetrics();
+        }
+        return;
+      }
+
+      if (existingIdx !== -1) {
+        // Re-scan existing building
+        triggerLaserMathScanner(placedBuildings[existingIdx]);
+        return;
+      }
+
+      // ── Place new 3D building ──────────────────────────────────────────
+      const newMesh = create3DBuildingMesh(currentTool, cell.col, cell.row);
+      placedBuildings.push(newMesh);
+      playSoundEffect('extrude');
+      triggerLaserMathScanner(newMesh);
+      updateAllHUDMetrics();
+    }
+
+    // Use 'click' in place mode (fires cleanly on trackpad tap without drift),
+    // 'pointerup' in orbit mode (consistent with drag detection above).
+    renderer.domElement.addEventListener('click', (e) => {
+      if (!isPlaceMode) return; // orbit mode handled by pointerup
+      if (e.button !== 0) return;
+      handlePlacementClick(e);
+    });
+
+    renderer.domElement.addEventListener('pointerup', (e) => {
+      if (isPlaceMode) return; // place mode handled by click above
+      if (e.button !== 0) return;
+      handlePlacementClick(e);
+    });
+
+    // Close Laser Scanner
+    document.getElementById('btnCloseScanner').addEventListener('click', () => {
+      document.getElementById('laserOverlay').style.display = 'none';
+      removeLaserVisuals();
+    });
+
+    // Re-Scan Button
+    document.getElementById('btnRescan').addEventListener('click', () => {
+      if (selectedBuilding) {
+        triggerLaserMathScanner(selectedBuilding);
+      }
+    });
+
+    // ==========================================================================
+    // 08 PALETTE & UI LOGIC
+    // ==========================================================================
+    function initPaletteUI() {
+      const list = document.getElementById('paletteList');
+      list.innerHTML = '';
+
+      BUILDING_TYPES.forEach((tool, idx) => {
+        const item = document.createElement('div');
+        item.className = `tool-card ${idx === 0 ? 'active' : ''}`;
+        item.innerHTML = `
+          <div class="tool-icon-box">${tool.icon}</div>
+          <div class="tool-info">
+            <span class="tool-title">${tool.name}</span>
+            <span class="tool-meta">
+              <span>H: ${tool.height}m</span>
+              <span>₹${tool.rate}/${tool.costModel === 'volume' ? 'm³' : 'm²'}</span>
+            </span>
+          </div>
+        `;
+
+        item.addEventListener('click', () => {
+          document.querySelectorAll('.tool-card').forEach(c => c.classList.remove('active'));
+          document.getElementById('btnToolDemolish').classList.remove('active');
+          item.classList.add('active');
+          currentTool = tool;
+          isDemolishMode = false;
+          updateGhostForTool(currentTool); // sync ghost height to new tool
+          applyMode(true); // clicking a palette tool always enters place mode
+        });
+
+        list.appendChild(item);
+      });
+
+      // ── Mode Toggle (Orbit ↔ Place) ───────────────────────────────────────
+      const btnModeToggle = document.getElementById('btnModeToggle');
+      const webglContainer = document.getElementById('webglContainer');
+
+      function applyMode(placeMode) {
+        isPlaceMode = placeMode;
+
+        if (isPlaceMode) {
+          // PLACE mode: disable OrbitControls, crosshair cursor, ghost visible
+          if (controls) controls.enabled = false;
+          webglContainer.classList.add('place-mode');
+          btnModeToggle.classList.add('place-active');
+          btnModeToggle.querySelector('#modeIcon').textContent  = '🏗️';
+          btnModeToggle.querySelector('#modeLabel').textContent = 'Place Building';
+          ghostGroup.visible = false; // will reappear on mousemove
+        } else {
+          // ORBIT mode: enable OrbitControls, grab cursor, hide ghost
+          if (controls) controls.enabled = true;
+          webglContainer.classList.remove('place-mode');
+          btnModeToggle.classList.remove('place-active');
+          btnModeToggle.querySelector('#modeIcon').textContent  = '🔍';
+          btnModeToggle.querySelector('#modeLabel').textContent = 'Rotate Camera';
+          ghostGroup.visible = false;
+          isDemolishMode = false;
+        }
+      }
+
+      // Start in Place mode (already set in isPlaceMode = true above)
+      applyMode(true);
+
+      btnModeToggle.addEventListener('click', () => applyMode(!isPlaceMode));
+
+      // Clicking any palette tool auto-switches to Place mode
+      // (already handled inside the tool-card click listener; reinforce here)
+
+      // ── Demolish Mode Toggle ─────────────────────────────────────────────
+      const btnDemo = document.getElementById('btnToolDemolish');
+      btnDemo.addEventListener('click', () => {
+        isDemolishMode = !isDemolishMode;
+        if (isDemolishMode) {
+          document.querySelectorAll('.tool-card').forEach(c => c.classList.remove('active'));
+          btnDemo.classList.add('active');
+          // Auto-switch to place mode when demolish is activated
+          applyMode(true);
+          showToast('Bulldozer active: Click any building to demolish (80% Refund)', '🚜');
+        } else {
+          btnDemo.classList.remove('active');
+          document.querySelectorAll('.tool-card')[0].classList.add('active');
+          currentTool = BUILDING_TYPES[0];
+        }
+      });
+
+      // Clear Grid Button
+      document.getElementById('btnClearAll').addEventListener('click', () => {
+        if (placedBuildings.length === 0) return;
+        if (confirm('Clear all placed 3D buildings from the grid?')) {
+          placedBuildings.forEach(b => scene.remove(b));
+          placedBuildings = [];
+          removeLaserVisuals();
+          document.getElementById('laserOverlay').style.display = 'none';
+          playSoundEffect('demolish');
+          updateAllHUDMetrics();
+          showToast('Grid cleared!', '🗑️');
+        }
+      });
+
+      // Sound Toggle
+      const btnSound = document.getElementById('btnSoundToggle');
+      btnSound.addEventListener('click', () => {
+        soundEnabled = !soundEnabled;
+        document.getElementById('soundIcon').textContent = soundEnabled ? '🔊' : '🔇';
+        document.getElementById('soundLabel').textContent = soundEnabled ? 'Sound: ON' : 'Sound: MUTED';
+        showToast(soundEnabled ? 'Sound effects enabled' : 'Sound muted', soundEnabled ? '🔊' : '🔇');
+      });
+    }
+
+    // ==========================================================================
+    // 09 HUD & MATHEMATICAL EFFICIENCY CALCULATION
+    // ==========================================================================
+    function updateAllHUDMetrics() {
+      let totalLandUsed = placedBuildings.length * 100; // 1 cell = 100 m²
+      let totalSpent = 0;
+      let totalResidentialVolume = 0;
+      let totalParksArea = 0;
+      let hasHospital = false;
+      let hasSchool = false;
+      let hasEnergy = false;
+      let totalVolume = 0;
+
+      placedBuildings.forEach(b => {
+        const d = b.userData.buildingData;
+        totalSpent += d.cost;
+        totalVolume += d.volumeM3;
+
+        if (d.toolId === 'residential') {
+          totalResidentialVolume += d.volumeM3;
+        } else if (d.toolId === 'park') {
+          totalParksArea += d.areaM2;
+        } else if (d.toolId === 'hospital') {
+          hasHospital = true;
+        } else if (d.toolId === 'school') {
+          hasSchool = true;
+        } else if (d.toolId === 'energy') {
+          hasEnergy = true;
+        }
+      });
+
+      // Population: 1 citizen per 12 m³ residential living volume
+      const citizens = Math.floor(totalResidentialVolume / 12);
+      const remainingBudget = TOTAL_BUDGET - totalSpent;
+      const landPct = (totalLandUsed / LAND_LIMIT_M2) * 100;
+      const popPct = Math.min(100, (citizens / TARGET_POPULATION) * 100);
+      const greenPct = totalLandUsed > 0 ? (totalParksArea / totalLandUsed) * 100 : 0;
+
+      // Update Top HUD Cards
+      document.getElementById('hudLandUsed').textContent = totalLandUsed.toLocaleString();
+      document.getElementById('hudLandPct').textContent = `${landPct.toFixed(1)}%`;
+      document.getElementById('hudLandBar').style.width = `${Math.min(100, landPct)}%`;
+
+      document.getElementById('hudBudgetRemaining').textContent = formatCurrency(remainingBudget);
+      document.getElementById('hudBudgetSpent').textContent = `Spent: ${formatCurrency(totalSpent)}`;
+      const budgetPct = Math.min(100, (totalSpent / TOTAL_BUDGET) * 100);
+      document.getElementById('hudBudgetBar').style.width = `${budgetPct}%`;
+
+      document.getElementById('hudPopCurrent').textContent = citizens.toLocaleString();
+      document.getElementById('hudPopPct').textContent = `${popPct.toFixed(0)}%`;
+      document.getElementById('hudPopBar').style.width = `${popPct}%`;
+
+      // Efficiency Score Model (0 to 100%)
+      let score = 0;
+      // 1. Population Score (25 pts)
+      score += (popPct / 100) * 25;
+      // 2. Land Balance (20 pts)
+      if (totalLandUsed <= LAND_LIMIT_M2) {
+        score += Math.min(20, (totalLandUsed / (LAND_LIMIT_M2 * 0.8)) * 20);
+      }
+      // 3. Infrastructure (Hospital, School, Energy) (20 pts)
+      if (hasHospital) score += 6.67;
+      if (hasSchool) score += 6.67;
+      if (hasEnergy) score += 6.66;
+      // 4. Green Space Ecology (15 pts)
+      if (greenPct >= 15) score += 15;
+      else score += (greenPct / 15) * 15;
+      // 5. Budget Solvency (20 pts)
+      if (remainingBudget >= 0 && totalSpent > 0) score += 20;
+
+      const finalScore = Math.min(100, Math.round(score));
+      document.getElementById('hudScoreVal').textContent = `${finalScore}%`;
+      document.getElementById('hudScoreBar').style.width = `${finalScore}%`;
+
+      let tier = 'Assessing...';
+      if (finalScore >= 90) tier = 'Grade A+ (Master)';
+      else if (finalScore >= 75) tier = 'Grade A (Gold)';
+      else if (finalScore >= 50) tier = 'Grade B (Developing)';
+      else tier = 'Grade C (Under-developed)';
+      document.getElementById('hudScoreTier').textContent = tier;
+
+      // Cache for report modal
+      return {
+        totalLandUsed,
+        landPct,
+        remainingBudget,
+        totalSpent,
+        citizens,
+        popPct,
+        greenPct,
+        totalVolume,
+        finalScore,
+        tier
+      };
+    }
+
+    function formatCurrency(amount) {
+      if (Math.abs(amount) >= 10000000) {
+        return `₹${(amount / 10000000).toFixed(2)} Cr`;
+      } else if (Math.abs(amount) >= 100000) {
+        return `₹${(amount / 100000).toFixed(2)} Lakh`;
+      } else {
+        return `₹${amount.toLocaleString('en-IN')}`;
+      }
+    }
+
+    function showToast(msg, icon = 'ℹ️') {
+      const toast = document.getElementById('toastPill');
+      document.getElementById('toastIcon').textContent = icon;
+      document.getElementById('toastText').textContent = msg;
+      toast.style.display = 'flex';
+      setTimeout(() => { toast.style.display = 'none'; }, 3200);
+    }
+
+    // ==========================================================================
+    // 10 CITY EVALUATION REPORT MODAL
+    // ==========================================================================
+    const evalModal = document.getElementById('evalModal');
+    document.getElementById('btnOpenReport').addEventListener('click', () => {
+      const m = updateAllHUDMetrics();
+
+      if (m.finalScore >= 90) {
+        playSoundEffect('fanfare');
+      }
+
+      document.getElementById('modalScoreNum').textContent = `${m.finalScore}%`;
+      document.getElementById('modalGradePill').textContent = m.tier;
+
+      document.getElementById('modalLandVal').textContent = `${m.landPct.toFixed(1)}%`;
+      document.getElementById('modalLandSub').textContent = `${m.totalLandUsed.toLocaleString()} / 10,000 m²`;
+
+      document.getElementById('modalGreenVal').textContent = `${m.greenPct.toFixed(1)}%`;
+      document.getElementById('modalGreenSub').textContent = m.greenPct >= 15 ? '✓ Target Achieved (≥15%)' : 'Deficit: Add more Bio-Parks';
+
+      document.getElementById('modalVolumeVal').textContent = `${m.totalVolume.toLocaleString()} m³`;
+      document.getElementById('modalVolumeSub').textContent = `${placedBuildings.length} total 3D structures`;
+
+      document.getElementById('modalBudgetVal').textContent = formatCurrency(m.remainingBudget);
+      document.getElementById('modalBudgetSub').textContent = `Spent: ${formatCurrency(m.totalSpent)} / ₹10 Cr Cap`;
+
+      document.getElementById('modalPopVal').textContent = `${m.citizens.toLocaleString()} / 5,000`;
+
+      evalModal.style.display = 'flex';
+    });
+
+    document.getElementById('btnCloseModal').addEventListener('click', () => {
+      evalModal.style.display = 'none';
+    });
+
+    document.getElementById('btnResumeBuilding').addEventListener('click', () => {
+      evalModal.style.display = 'none';
+    });
+
+    // Close on Escape
+    window.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') {
+        evalModal.style.display = 'none';
+        document.getElementById('laserOverlay').style.display = 'none';
+        removeLaserVisuals();
+      }
+    });
+
+    // ==========================================================================
+    // 11 3D RENDER & ANIMATION LOOP
+    // ==========================================================================
+    const clock = new THREE.Clock();
+
+    function animate() {
+      requestAnimationFrame(animate);
+
+      const delta = clock.getDelta();
+
+      // Smooth Orbit Controls update
+      if (controls) controls.update();
+
+      // Extrusion Entrance Animation for Newly Placed Buildings
+      placedBuildings.forEach(b => {
+        if (b.userData.animatingIn) {
+          b.userData.currentScaleY += delta * 4; // Fast entrance
+          if (b.userData.currentScaleY >= 1) {
+            b.userData.currentScaleY = 1;
+            b.userData.animatingIn = false;
+          }
+          b.scale.y = b.userData.currentScaleY;
+        }
+      });
+
+      // Animated 3D Laser Math Scanner Sweep Animation
+      if (isLaserScanning && laserMeshGroup && selectedBuilding) {
+        laserScanProgress += delta * 1.5; // Complete sweep in ~0.65 seconds
+
+        const bHeight = selectedBuilding.userData.buildingData.height;
+
+        if (laserScanProgress < 0.35) {
+          // Phase 1: Tracing bottom 2D perimeter
+          laserMeshGroup.children[0].visible = true; // Perimeter wire loop
+          laserMeshGroup.children[1].position.y = 0.2;
+          laserMeshGroup.children[2].position.y = 0.2;
+        } else {
+          // Phase 2: Upward Z/Y Height sweep along building volume
+          document.getElementById('scanStepPerimeter').className = 'scan-step-box';
+          document.getElementById('scanStepVolume').className = 'scan-step-box scanning';
+
+          const sweepY = ((laserScanProgress - 0.35) / 0.65) * bHeight;
+          if (sweepY <= bHeight) {
+            laserMeshGroup.children[1].position.y = sweepY;
+            laserMeshGroup.children[2].position.y = sweepY;
+          } else {
+            // Sweep complete, pulse at top
+            laserMeshGroup.children[1].position.y = bHeight;
+            laserMeshGroup.children[2].position.y = bHeight;
+          }
+        }
+
+        if (laserScanProgress >= 1.5) {
+          // Loop sweep gently
+          laserScanProgress = 0.35;
+        }
+      }
+
+      renderer.render(scene, camera);
+    }
+
+    // Responsive Window Resize
+    window.addEventListener('resize', () => {
+      camera.aspect = window.innerWidth / window.innerHeight;
+      camera.updateProjectionMatrix();
+      renderer.setSize(window.innerWidth, window.innerHeight);
+    });
+
+    // ==========================================================================
+    // 12 START APPLICATION
+    // ==========================================================================
+    initPaletteUI();
+    updateAllHUDMetrics();
+    animate();
+  </script>
+</body>
+</html>
